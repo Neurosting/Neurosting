@@ -3,7 +3,6 @@
 NeuroString – NeuroPilot (automatický pilot sítě)
 """
 
-import time
 import random
 import threading
 from datetime import datetime
@@ -35,6 +34,7 @@ class NeuroPilot:
         self.max_nodes = max_nodes
         self.running = False
         self._thread = None
+        self._stop_event = threading.Event()
         self.actions_performed = 0
         self.started_at = None
 
@@ -49,6 +49,7 @@ class NeuroPilot:
             return
 
         self.running = True
+        self._stop_event.clear()
         self.started_at = datetime.now()
         self._thread = threading.Thread(target=self._run, daemon=True)
         self._thread.start()
@@ -64,8 +65,11 @@ class NeuroPilot:
             return
 
         self.running = False
+        self._stop_event.set()
         if self._thread:
-            self._thread.join(timeout=self.interval + 1)
+            self._thread.join(timeout=5)
+            if self._thread.is_alive():
+                print("⚠️  NeuroPilot vlákno stále běží (timeout).")
         print(
             f"🛑 NeuroPilot zastaven | "
             f"Provedeno akcí: {self.actions_performed}"
@@ -92,9 +96,9 @@ class NeuroPilot:
 
     def _run(self):
         """Hlavní smyčka automatického pilota."""
-        while self.running:
+        while self.running and not self._stop_event.is_set():
             self._step()
-            time.sleep(self.interval)
+            self._stop_event.wait(timeout=self.interval)
 
     def _step(self):
         """Provede jeden krok automatického pilota."""
