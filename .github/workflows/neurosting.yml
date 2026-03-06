@@ -19,7 +19,7 @@ jobs:
     
     - name: Instalace balíčků
       run: |
-        pip install flask numpy
+        pip install -r Requirements
     
     - name: Kontrola souborů
       run: |
