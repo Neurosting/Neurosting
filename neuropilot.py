@@ -22,7 +22,7 @@ class NeuroPilot:
         Args:
             network: instance NeuroNetwork, kterou NeuroPilot spravuje
             interval: prodleva mezi akcemi v sekundách (výchozí 2 s)
-            max_nodes: maximální počet uzlů, které NeuroPilot přidá (výchozí 10)
+            max_nodes: maximální celkový počet uzlů v síti (výchozí 10)
         """
         if interval <= 0:
             raise ValueError("interval musí být kladné číslo")
@@ -35,6 +35,7 @@ class NeuroPilot:
         self.running = False
         self._thread = None
         self._stop_event = threading.Event()
+        self._lock = threading.Lock()
         self.actions_performed = 0
         self.started_at = None
 
@@ -96,9 +97,13 @@ class NeuroPilot:
 
     def _run(self):
         """Hlavní smyčka automatického pilota."""
-        while self.running and not self._stop_event.is_set():
-            self._step()
-            self._stop_event.wait(timeout=self.interval)
+        try:
+            while self.running and not self._stop_event.is_set():
+                self._step()
+                self._stop_event.wait(timeout=self.interval)
+        except Exception as e:
+            print(f"❌ [NeuroPilot] Chyba: {e}")
+            self.running = False
 
     def _step(self):
         """Provede jeden krok automatického pilota."""
@@ -111,13 +116,16 @@ class NeuroPilot:
 
         if action == "transaction":
             data = f"autopilot_{datetime.now().timestamp()}"
-            result = self.network.process_transaction(data)
+            with self._lock:
+                result = self.network.process_transaction(data)
             print(f"🤖 [NeuroPilot] Transakce: {result}")
+            self.actions_performed += 1
 
-        elif action == "add_node" and len(self.network.nodes) < self.max_nodes:
-            node = NeuroNode()
-            self.network.add_node(node)
-            self.network.activate_quantum_entanglement()
-            print(f"🤖 [NeuroPilot] Přidán uzel: {node.node_id}")
-
-        self.actions_performed += 1
+        elif action == "add_node":
+            with self._lock:
+                if len(self.network.nodes) < self.max_nodes:
+                    node = NeuroNode()
+                    self.network.add_node(node)
+                    self.network.activate_quantum_entanglement()
+                    print(f"🤖 [NeuroPilot] Přidán uzel: {node.node_id}")
+                    self.actions_performed += 1
