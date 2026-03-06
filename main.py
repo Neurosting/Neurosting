@@ -9,6 +9,7 @@ import time
 from datetime import datetime
 from node import NeuroNode
 from network import NeuroNetwork
+from neuropilot import NeuroPilot
 from web import app
 import threading
 
@@ -69,8 +70,11 @@ def main():
     web_thread.daemon = True
     web_thread.start()
     
+    # Inicializuj NeuroPilot
+    pilot = NeuroPilot(network)
+
     # Hlavní smyčka
-    print("\n📡 Síť běží. Příkazy: [T]ransakce, [S]tav, [I]nfo, [Q]uit\n")
+    print("\n📡 Síť běží. Příkazy: [T]ransakce, [S]tav, [I]nfo, [P]ilot, [Q]uit\n")
     
     try:
         while True:
@@ -104,13 +108,25 @@ def main():
                 print("⚛️  Kvantovou fyziku - okamžitý konsenzus")
                 print("🌌 Teorii strun - 11D úložiště")
                 print("="*50 + "\n")
+
+            elif cmd == "P":
+                # NeuroPilot – automatický pilot
+                if pilot.running:
+                    pilot.stop()
+                    status = pilot.get_status()
+                    print(f"📊 Celkem provedeno akcí: {status['actions']} za {status['elapsed_seconds']} s")
+                else:
+                    pilot.start()
+                    print("💡 Zadej znovu [P] pro zastavení pilota.")
                 
             elif cmd == "Q":
+                if pilot.running:
+                    pilot.stop()
                 print("\n👋 Ukončuji NeuroString...")
                 break
                 
             else:
-                print("❌ Neznámý příkaz. Zkuste T, S, I nebo Q.")
+                print("❌ Neznámý příkaz. Zkuste T, S, I, P nebo Q.")
                 
     except KeyboardInterrupt:
         print("\n\n👋 Ukončuji NeuroString...")
