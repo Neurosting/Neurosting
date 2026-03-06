@@ -28,4 +28,13 @@ jobs:
     
     - name: Spuštění NeuroStringu
       run: |
-        timeout 10s python main.py || echo "✅ Test proběhl"
+        timeout 10s python main.py
+        status=$?
+        if [ "$status" -eq 124 ]; then
+          echo "✅ Test proběhl (skript byl ukončen po 10s timeoutu, což je očekávané chování)"
+        elif [ "$status" -ne 0 ]; then
+          echo "❌ Test selhal s návratovým kódem $status"
+          exit "$status"
+        else
+          echo "✅ Test proběhl úspěšně"
+        fi
