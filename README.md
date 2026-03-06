@@ -24,4 +24,4 @@ pip install -r requirements.txt
 # Spuštění
 python main.py
 
-created by Volf david
+created by Volf David
