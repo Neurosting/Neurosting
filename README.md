@@ -19,9 +19,14 @@ NeuroString kombinuje neuronové sítě, kvantovou fyziku a teorii strun do samo
 
 ```bash
 # Instalace
-pip install -r requirements.txt
+pip install -r Requirements
 
 # Spuštění
 python main.py
+```
+
+## 🤖 NeuroPilot
+
+NeuroPilot je automatický pilot sítě. Spusťte jej příkazem **[P]** v interaktivní konzoli – síť začne sama odesílat transakce a přidávat uzly. Druhým stiskem **[P]** pilota zastavíte.
 
 created by Volf david
