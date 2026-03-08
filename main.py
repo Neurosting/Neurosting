@@ -89,13 +89,14 @@ def main():
                 
             elif cmd == "S":
                 # Zobraz stav sítě
+                state = network.get_network_state()
                 print("\n" + "="*50)
                 print("📊 STAV SÍTĚ")
                 print("="*50)
-                print(f"Počet uzlů: {len(network.nodes)}")
-                print(f"Kvantová provázanost: {network.entanglement_level:.2%}")
-                print(f"Celkový počet synapsí: {network.total_synapses()}")
-                print(f"Paměťové vzory: {network.memory_patterns}")
+                print(f"Počet uzlů: {state['nodes']}")
+                print(f"Kvantová provázanost: {state['entanglement']:.2%}")
+                print(f"Celkový počet synapsí: {state['synapses']}")
+                print(f"Paměťové vzory: {state['memory_patterns']}")
                 print("="*50 + "\n")
                 
             elif cmd == "I":

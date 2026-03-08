@@ -120,9 +120,8 @@ class NeuroPilot:
             self.actions_performed += 1
 
         elif action == "add_node":
-            if len(self.network.nodes) < self.max_nodes:
-                node = NeuroNode()
-                self.network.add_node(node)
+            node = NeuroNode()
+            if self.network.add_node_if_below(node, self.max_nodes):
                 self.network.activate_quantum_entanglement()
                 print(f"🤖 [NeuroPilot] Přidán uzel: {node.node_id}")
                 self.actions_performed += 1
