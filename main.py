@@ -120,8 +120,6 @@ def main():
                     print("💡 Zadej znovu [P] pro zastavení pilota.")
                 
             elif cmd == "Q":
-                if pilot.running:
-                    pilot.stop()
                 print("\n👋 Ukončuji NeuroString...")
                 break
                 
@@ -130,6 +128,9 @@ def main():
                 
     except KeyboardInterrupt:
         print("\n\n👋 Ukončuji NeuroString...")
+    finally:
+        if pilot.running:
+            pilot.stop()
     
     print("✅ Hotovo.")
 

@@ -35,7 +35,6 @@ class NeuroPilot:
         self.running = False
         self._thread = None
         self._stop_event = threading.Event()
-        self._lock = threading.Lock()
         self.actions_performed = 0
         self.started_at = None
 
@@ -116,16 +115,14 @@ class NeuroPilot:
 
         if action == "transaction":
             data = f"autopilot_{datetime.now().timestamp()}"
-            with self._lock:
-                result = self.network.process_transaction(data)
+            result = self.network.process_transaction(data)
             print(f"🤖 [NeuroPilot] Transakce: {result}")
             self.actions_performed += 1
 
         elif action == "add_node":
-            with self._lock:
-                if len(self.network.nodes) < self.max_nodes:
-                    node = NeuroNode()
-                    self.network.add_node(node)
-                    self.network.activate_quantum_entanglement()
-                    print(f"🤖 [NeuroPilot] Přidán uzel: {node.node_id}")
-                    self.actions_performed += 1
+            if len(self.network.nodes) < self.max_nodes:
+                node = NeuroNode()
+                self.network.add_node(node)
+                self.network.activate_quantum_entanglement()
+                print(f"🤖 [NeuroPilot] Přidán uzel: {node.node_id}")
+                self.actions_performed += 1
