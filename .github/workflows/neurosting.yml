@@ -1,33 +1,28 @@
 name: NeuroString
-permissions:
-  contents: read
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Nastavení Pythonu
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-    
-    - name: Instalace balíčků
-      run: |
-        pip install flask numpy
-    
-    - name: Kontrola souborů
-      run: |
-        ls -la
-        python --version
-    
-    - name: Spuštění NeuroStringu
-      run: |
-        timeout 10s python main.py || echo "✅ Test proběhl"
+      - uses: actions/checkout@v3
+      - name: Nastavení Pythonu
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Instalace závislostí
+        run: python -m pip install -r Requirements
+      - name: Kontrola syntaxe
+        run: python -m compileall -q main.py memory.py network.py node.py quantum.py web.py
+      - name: Ověření spuštění a ukončení
+        run: |
+          printf 'Q\n' | timeout 30s python main.py
